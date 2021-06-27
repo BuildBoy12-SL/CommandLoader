@@ -17,12 +17,12 @@ namespace CommandLoader.EventHandlers
     /// <summary>
     /// Runs methods subscribed to events in <see cref="Exiled.Events.Handlers.Server"/>.
     /// </summary>
-    public class ServerEvents
+    public static class ServerEvents
     {
         private static readonly List<CoroutineHandle> Coroutines = new List<CoroutineHandle>();
 
         /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnSendingRemoteAdminCommand(SendingRemoteAdminCommandEventArgs)"/>
-        public void OnSendingRemoteAdminCommand(SendingRemoteAdminCommandEventArgs ev)
+        public static void OnSendingRemoteAdminCommand(SendingRemoteAdminCommandEventArgs ev)
         {
             Log.Debug($"{ev.Sender.Nickname} sent a command: {ev.Name} {string.Join(" ", ev.Arguments)}", Plugin.Instance.Config.ShowDebug);
             CommandScript commandScript = GetCommand(ev.Name);
@@ -35,7 +35,7 @@ namespace CommandLoader.EventHandlers
         }
 
         /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnRoundEnded(RoundEndedEventArgs)"/>
-        public void OnRoundEnded(RoundEndedEventArgs ev)
+        public static void OnRoundEnded(RoundEndedEventArgs ev)
         {
             foreach (CoroutineHandle coroutineHandle in Coroutines)
                 Timing.KillCoroutines(coroutineHandle);

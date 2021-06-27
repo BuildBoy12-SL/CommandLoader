@@ -41,12 +41,9 @@ namespace CommandLoader.API
         public void Run(CommandSender sender)
         {
             List<string> parsedArguments = new List<string>();
-            if (sender is PlayerCommandSender playerCommandSender)
+            foreach (string argument in Arguments)
             {
-                foreach (string argument in Arguments)
-                {
-                    parsedArguments.Add(ParseWildcard(argument, playerCommandSender.ReferenceHub));
-                }
+                parsedArguments.Add(ParseWildcard(argument, sender));
             }
 
             CommandProcessor.ProcessQuery($"{Command} {string.Join(" ", parsedArguments)}", sender);
@@ -55,12 +52,26 @@ namespace CommandLoader.API
         /// <inheritdoc />
         public override string ToString() => $"{Command} {string.Join(" ", Arguments)}";
 
-        private static string ParseWildcard(string wildcard, ReferenceHub sender)
+        private static string ParseWildcard(string wildcard, CommandSender sender)
         {
+            string name;
+            int id;
+
+            if (sender is PlayerCommandSender playerCommandSender)
+            {
+                name = playerCommandSender.Nickname;
+                id = playerCommandSender.PlayerId;
+            }
+            else
+            {
+                name = ReferenceHub.HostHub.nicknameSync.Network_myNickSync;
+                id = ReferenceHub.HostHub.playerId;
+            }
+
             return wildcard.ReplaceAfterToken('*', new[]
             {
-                new Tuple<string, object>("SenderName", sender.nicknameSync.Network_myNickSync),
-                new Tuple<string, object>("SenderId", sender.queryProcessor.NetworkPlayerId),
+                new Tuple<string, object>("SenderName", name),
+                new Tuple<string, object>("SenderId", id),
                 new Tuple<string, object>("AllPlayerIds", string.Join(".", Player.List.Select(player => player.Id))),
             });
         }

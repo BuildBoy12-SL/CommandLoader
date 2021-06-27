@@ -31,17 +31,11 @@ namespace CommandLoader
         /// <inheritdoc/>
         public override Version RequiredExiledVersion { get; } = new Version(2, 10, 0);
 
-        /// <summary>
-        /// Gets an instance of <see cref="CommandLoader.EventHandlers.ServerEvents"/>.
-        /// </summary>
-        public ServerEvents ServerEvents { get; private set; }
-
         /// <inheritdoc />
         public override void OnEnabled()
         {
             Loader.LoadCommands();
 
-            ServerEvents = new ServerEvents();
             ServerHandlers.SendingRemoteAdminCommand += ServerEvents.OnSendingRemoteAdminCommand;
             ServerHandlers.RoundEnded += ServerEvents.OnRoundEnded;
 
@@ -53,7 +47,6 @@ namespace CommandLoader
         {
             ServerHandlers.SendingRemoteAdminCommand -= ServerEvents.OnSendingRemoteAdminCommand;
             ServerHandlers.RoundEnded -= ServerEvents.OnRoundEnded;
-            ServerEvents = null;
 
             base.OnDisabled();
         }
