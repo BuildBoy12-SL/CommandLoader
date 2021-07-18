@@ -54,26 +54,26 @@ namespace CommandLoader.API
 
         private static string ParseWildcard(string wildcard, CommandSender sender)
         {
-            string name;
-            int id;
-
-            if (sender is PlayerCommandSender playerCommandSender)
-            {
-                name = playerCommandSender.Nickname;
-                id = playerCommandSender.PlayerId;
-            }
-            else
-            {
-                name = ReferenceHub.HostHub.nicknameSync.Network_myNickSync;
-                id = ReferenceHub.HostHub.playerId;
-            }
-
+            GetSenderInfo(sender, out string name, out int id);
             return wildcard.ReplaceAfterToken('*', new[]
             {
                 new Tuple<string, object>("SenderName", name),
                 new Tuple<string, object>("SenderId", id),
                 new Tuple<string, object>("AllPlayerIds", string.Join(".", Player.List.Select(player => player.Id))),
             });
+        }
+
+        private static void GetSenderInfo(CommandSender sender, out string name, out int id)
+        {
+            if (sender is PlayerCommandSender playerCommandSender)
+            {
+                name = playerCommandSender.Nickname;
+                id = playerCommandSender.PlayerId;
+                return;
+            }
+
+            name = ReferenceHub.HostHub.nicknameSync.Network_myNickSync;
+            id = ReferenceHub.HostHub.playerId;
         }
     }
 }
