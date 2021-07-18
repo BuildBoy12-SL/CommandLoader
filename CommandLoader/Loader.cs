@@ -10,37 +10,33 @@ namespace CommandLoader
     using System.Collections.Generic;
     using System.IO;
     using CommandLoader.API;
-    using YamlDotNet.Serialization;
 
     /// <summary>
     /// Handles the loading and storing of all command scripts to <see cref="CommandScript"/>.
     /// </summary>
     public static class Loader
     {
-        private static readonly ISerializer Serializer = new SerializerBuilder().Build();
-        private static readonly IDeserializer Deserializer = new DeserializerBuilder().Build();
-
         static Loader()
         {
             Folder = Plugin.Instance.Config.Folder;
-            if (!Directory.Exists(Folder))
+            if (Directory.Exists(Folder))
+                return;
+
+            Directory.CreateDirectory(Folder);
+            File.WriteAllText(Path.Combine(Folder, "ExampleScript"), Exiled.Loader.Loader.Serializer.Serialize(new List<Instruction>
             {
-                Directory.CreateDirectory(Folder);
-                File.WriteAllText(Path.Combine(Folder, "ExampleScript"), Serializer.Serialize(new List<Instruction>
+                new Instruction
                 {
-                    new Instruction
-                    {
-                        Command = "doortp",
-                        Arguments = new[] { "*SenderId", "SURFACE_GATE" },
-                        Delay = 2f,
-                    },
-                    new Instruction
-                    {
-                        Command = "pbc",
-                        Arguments = new[] { "*SenderId", "5", "Welcome, *SenderName, to the funhouse." },
-                    },
-                }));
-            }
+                    Command = "doortp",
+                    Arguments = new[] { "*SenderId", "SURFACE_GATE" },
+                    Delay = 2f,
+                },
+                new Instruction
+                {
+                    Command = "pbc",
+                    Arguments = new[] { "*SenderId", "5", "Welcome, *SenderName, to the funhouse." },
+                },
+            }));
         }
 
         /// <summary>
@@ -63,7 +59,7 @@ namespace CommandLoader
                 Commands.Add(new CommandScript
                 {
                     Name = Path.GetFileName(file),
-                    Instructions = Deserializer.Deserialize<List<Instruction>>(File.ReadAllText(file)),
+                    Instructions = Exiled.Loader.Loader.Deserializer.Deserialize<List<Instruction>>(File.ReadAllText(file)),
                 });
             }
         }
