@@ -5,23 +5,27 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace CommandLoader.EventHandlers
+namespace CommandLoader
 {
     using Exiled.Events.EventArgs;
-    using MEC;
 
     /// <summary>
     /// Runs methods subscribed to events in <see cref="Exiled.Events.Handlers.Server"/>.
     /// </summary>
     public class EventHandlers
     {
+        private readonly Plugin plugin;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EventHandlers"/> class.
+        /// </summary>
+        /// <param name="plugin">An instance of the <see cref="Plugin"/> class.</param>
+        public EventHandlers(Plugin plugin) => this.plugin = plugin;
+
         /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnRoundEnded(RoundEndedEventArgs)"/>
         public void OnRoundEnded(RoundEndedEventArgs ev)
         {
-            foreach (CoroutineHandle coroutineHandle in Coroutines)
-                Timing.KillCoroutines(coroutineHandle);
-
-            Coroutines.Clear();
+            plugin.CommandProcessor.Clear();
         }
     }
 }

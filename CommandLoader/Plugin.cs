@@ -8,7 +8,6 @@
 namespace CommandLoader
 {
     using System;
-    using CommandLoader.EventHandlers;
     using Exiled.API.Features;
     using ServerHandlers = Exiled.Events.Handlers.Server;
 
@@ -17,27 +16,33 @@ namespace CommandLoader
     /// </summary>
     public class Plugin : Plugin<Config>
     {
-        private static readonly Plugin InstanceValue = new Plugin();
-
-        private Plugin()
-        {
-        }
-
         /// <summary>
         /// Gets an instance of the <see cref="Plugin"/> class.
         /// </summary>
-        public static Plugin Instance { get; } = InstanceValue;
+        public static Plugin Instance { get; private set; }
 
         /// <inheritdoc/>
-        public override Version RequiredExiledVersion { get; } = new Version(2, 10, 0);
+        public override Version RequiredExiledVersion { get; } = new Version(3, 0, 0);
+
+        /// <summary>
+        /// Gets an instance of the <see cref="CommandLoader.CommandProcessor"/> class.
+        /// </summary>
+        public CommandProcessor CommandProcessor { get; private set; }
+
+        /// <summary>
+        /// Gets an instance of the <see cref="CommandLoader.EventHandlers"/> class.
+        /// </summary>
+        public EventHandlers EventHandlers { get; private set; }
 
         /// <inheritdoc />
         public override void OnEnabled()
         {
+            Instance = this;
             Loader.LoadCommands();
 
-            ServerHandlers.SendingRemoteAdminCommand += ServerEvents.OnSendingRemoteAdminCommand;
-            ServerHandlers.RoundEnded += ServerEvents.OnRoundEnded;
+            CommandProcessor = new CommandProcessor(this);
+            EventHandlers = new EventHandlers(this);
+            ServerHandlers.RoundEnded += EventHandlers.OnRoundEnded;
 
             base.OnEnabled();
         }
@@ -45,9 +50,11 @@ namespace CommandLoader
         /// <inheritdoc />
         public override void OnDisabled()
         {
-            ServerHandlers.SendingRemoteAdminCommand -= ServerEvents.OnSendingRemoteAdminCommand;
-            ServerHandlers.RoundEnded -= ServerEvents.OnRoundEnded;
+            ServerHandlers.RoundEnded -= EventHandlers.OnRoundEnded;
+            EventHandlers = null;
+            CommandProcessor = null;
 
+            Instance = null;
             base.OnDisabled();
         }
     }
