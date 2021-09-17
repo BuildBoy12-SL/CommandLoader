@@ -9,6 +9,7 @@ namespace CommandLoader
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using CommandLoader.API;
     using Exiled.API.Features;
     using MEC;
@@ -59,13 +60,7 @@ namespace CommandLoader
 
         private static CommandScript GetCommand(string name)
         {
-            foreach (CommandScript commandScript in Loader.Commands)
-            {
-                if (string.Equals(commandScript.Name, name, StringComparison.OrdinalIgnoreCase))
-                    return commandScript;
-            }
-
-            return null;
+            return Loader.Commands.FirstOrDefault(commandScript => string.Equals(commandScript.Name, name, StringComparison.OrdinalIgnoreCase));
         }
 
         private static IEnumerator<float> RunInstructionSet(List<Instruction> instructions, CommandSender sender)
