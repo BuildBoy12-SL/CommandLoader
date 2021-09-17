@@ -35,9 +35,8 @@ namespace CommandLoader
         /// <returns>A value indicating whether a custom command was found and executed.</returns>
         public bool TryRunCommand(CommandSender sender, string query)
         {
-            Player player = Player.Get(sender);
             string name = query.Split(' ')[0];
-            Log.Debug($"{player.Nickname} sent a command: {query}", plugin.Config.ShowDebug);
+            Log.Debug($"{sender.Nickname} sent a command: {query}", plugin.Config.ShowDebug);
             CommandScript commandScript = GetCommand(name);
             if (commandScript == null)
                 return false;
