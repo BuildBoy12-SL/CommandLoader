@@ -22,7 +22,7 @@ namespace CommandLoader
         public static Plugin Instance { get; private set; }
 
         /// <inheritdoc/>
-        public override Version RequiredExiledVersion { get; } = new Version(3, 0, 0);
+        public override Version RequiredExiledVersion { get; } = new Version(5, 0, 0);
 
         /// <summary>
         /// Gets an instance of the <see cref="CommandLoader.CommandProcessor"/> class.
