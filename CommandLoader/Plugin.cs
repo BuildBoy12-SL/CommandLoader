@@ -9,6 +9,7 @@ namespace CommandLoader
 {
     using System;
     using Exiled.API.Features;
+    using HarmonyLib;
     using ServerHandlers = Exiled.Events.Handlers.Server;
 
     /// <summary>
@@ -16,6 +17,8 @@ namespace CommandLoader
     /// </summary>
     public class Plugin : Plugin<Config>
     {
+        private Harmony harmony;
+
         /// <summary>
         /// Gets an instance of the <see cref="Plugin"/> class.
         /// </summary>
@@ -40,6 +43,9 @@ namespace CommandLoader
             Instance = this;
             Loader.LoadCommands();
 
+            harmony = new Harmony($"commandLoader.{DateTime.UtcNow.Ticks}");
+            harmony.PatchAll();
+
             CommandProcessor = new CommandProcessor(this);
             EventHandlers = new EventHandlers(this);
             ServerHandlers.RoundEnded += EventHandlers.OnRoundEnded;
@@ -54,6 +60,8 @@ namespace CommandLoader
             EventHandlers = null;
             CommandProcessor = null;
 
+            harmony.UnpatchAll(harmony.Id);
+            harmony = null;
             Instance = null;
             base.OnDisabled();
         }

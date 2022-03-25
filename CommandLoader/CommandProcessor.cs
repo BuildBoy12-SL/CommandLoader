@@ -36,13 +36,12 @@ namespace CommandLoader
         /// <returns>A value indicating whether a custom command was found and executed.</returns>
         public bool TryRunCommand(CommandSender sender, string query)
         {
-            string name = query.Split(' ')[0];
             Log.Debug($"{sender.Nickname} sent a command: {query}", plugin.Config.ShowDebug);
-            CommandScript commandScript = GetCommand(name);
+            CommandScript commandScript = GetCommand(query);
             if (commandScript == null)
                 return false;
 
-            Log.Debug($"Command by the name of {name} was found in the loaded scripts, running.", plugin.Config.ShowDebug);
+            Log.Debug($"Command by the name of '{query}' was found in the loaded scripts, running.", plugin.Config.ShowDebug);
             coroutines.Add(Timing.RunCoroutine(RunInstructionSet(commandScript.Instructions, sender)));
             return true;
         }
