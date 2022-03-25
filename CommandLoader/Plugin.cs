@@ -18,6 +18,7 @@ namespace CommandLoader
     public class Plugin : Plugin<Config>
     {
         private Harmony harmony;
+        private EventHandlers eventHandlers;
 
         /// <summary>
         /// Gets an instance of the <see cref="Plugin"/> class.
@@ -32,11 +33,6 @@ namespace CommandLoader
         /// </summary>
         public CommandProcessor CommandProcessor { get; private set; }
 
-        /// <summary>
-        /// Gets an instance of the <see cref="CommandLoader.EventHandlers"/> class.
-        /// </summary>
-        public EventHandlers EventHandlers { get; private set; }
-
         /// <inheritdoc />
         public override void OnEnabled()
         {
@@ -47,8 +43,8 @@ namespace CommandLoader
             harmony.PatchAll();
 
             CommandProcessor = new CommandProcessor(this);
-            EventHandlers = new EventHandlers(this);
-            ServerHandlers.RoundEnded += EventHandlers.OnRoundEnded;
+            eventHandlers = new EventHandlers(this);
+            ServerHandlers.RoundEnded += eventHandlers.OnRoundEnded;
 
             base.OnEnabled();
         }
@@ -56,8 +52,8 @@ namespace CommandLoader
         /// <inheritdoc />
         public override void OnDisabled()
         {
-            ServerHandlers.RoundEnded -= EventHandlers.OnRoundEnded;
-            EventHandlers = null;
+            ServerHandlers.RoundEnded -= eventHandlers.OnRoundEnded;
+            eventHandlers = null;
             CommandProcessor = null;
 
             harmony.UnpatchAll(harmony.Id);
