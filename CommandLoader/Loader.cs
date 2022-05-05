@@ -7,9 +7,11 @@
 
 namespace CommandLoader
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using CommandLoader.API;
+    using Exiled.API.Features;
 
     /// <summary>
     /// Handles the loading and storing of all command scripts to <see cref="CommandScript"/>.
@@ -54,13 +56,21 @@ namespace CommandLoader
         /// </summary>
         public static void LoadCommands()
         {
+            Commands.Clear();
             foreach (string file in Directory.GetFiles(Folder))
             {
-                Commands.Add(new CommandScript
+                try
                 {
-                    Name = Path.GetFileName(file),
-                    Instructions = Exiled.Loader.Loader.Deserializer.Deserialize<List<Instruction>>(File.ReadAllText(file)),
-                });
+                    Commands.Add(new CommandScript
+                    {
+                        Name = Path.GetFileName(file),
+                        Instructions = Exiled.Loader.Loader.Deserializer.Deserialize<List<Instruction>>(File.ReadAllText(file)),
+                    });
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"Failed to load command script \"{file}\":\n{e.Message}");
+                }
             }
         }
     }

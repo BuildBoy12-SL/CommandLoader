@@ -9,6 +9,7 @@ namespace CommandLoader.Commands
 {
     using System;
     using System.Text;
+    using CommandLoader.API;
     using CommandSystem;
     using NorthwoodLib.Pools;
 
@@ -19,20 +20,20 @@ namespace CommandLoader.Commands
     public class ViewScripts : ICommand
     {
         /// <inheritdoc />
-        public string Command { get; } = "scripts";
+        public string Command => "scripts";
 
         /// <inheritdoc />
         public string[] Aliases { get; } = Array.Empty<string>();
 
         /// <inheritdoc />
-        public string Description { get; } = "Shows all loaded command scripts.";
+        public string Description => "Shows all loaded command scripts.";
 
         /// <inheritdoc />
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             StringBuilder stringBuilder = StringBuilderPool.Shared.Rent();
             stringBuilder.AppendLine("Loaded Scripts:");
-            foreach (var command in Loader.Commands)
+            foreach (CommandScript command in Loader.Commands)
             {
                 stringBuilder.AppendLine(command.Name);
                 stringBuilder.AppendLine(string.Join(", ", command.Instructions));

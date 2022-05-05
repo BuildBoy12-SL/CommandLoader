@@ -34,17 +34,14 @@ namespace CommandLoader
 
             for (int i = 0; i < sourceLength; i++)
             {
-                // Append characters until you find the token
                 char auxChar = token == char.MaxValue ? (char)(char.MaxValue - 1) : char.MaxValue;
                 for (; i < sourceLength && (auxChar = source[i]) != token; i++)
                     builder.Append(auxChar);
 
-                // Ensures no weird stuff regarding token being null
                 if (auxChar == token)
                 {
                     int movePos = 0;
 
-                    // Try to find a tuple
                     int length = valuePairs.Length;
                     for (int ind = 0; ind < length; ind++)
                     {
@@ -54,16 +51,14 @@ namespace CommandLoader
                         {
                         }
 
-                        // General condition for "key found"
                         if (j == kvp.Item1.Length)
                         {
                             movePos = j;
-                            builder.Append(kvp.Item2); // append what we're replacing the key with
+                            builder.Append(kvp.Item2);
                             break;
                         }
                     }
 
-                    // Don't skip the token if you didn't find the key, append it
                     if (movePos == 0)
                         builder.Append(token);
                     else

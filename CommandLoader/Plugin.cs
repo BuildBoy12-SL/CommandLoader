@@ -44,6 +44,7 @@ namespace CommandLoader
 
             CommandProcessor = new CommandProcessor(this);
             eventHandlers = new EventHandlers(this);
+            ServerHandlers.ReloadedConfigs += eventHandlers.OnReloadedConfigs;
             ServerHandlers.RoundEnded += eventHandlers.OnRoundEnded;
 
             base.OnEnabled();
@@ -52,6 +53,7 @@ namespace CommandLoader
         /// <inheritdoc />
         public override void OnDisabled()
         {
+            ServerHandlers.ReloadedConfigs -= eventHandlers.OnReloadedConfigs;
             ServerHandlers.RoundEnded -= eventHandlers.OnRoundEnded;
             eventHandlers = null;
             CommandProcessor = null;

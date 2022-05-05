@@ -22,6 +22,12 @@ namespace CommandLoader
         /// <param name="plugin">An instance of the <see cref="Plugin"/> class.</param>
         public EventHandlers(Plugin plugin) => this.plugin = plugin;
 
+        /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnReloadedConfigs()"/>
+        public void OnReloadedConfigs()
+        {
+            Loader.LoadCommands();
+        }
+
         /// <inheritdoc cref="Exiled.Events.Handlers.Server.OnRoundEnded(RoundEndedEventArgs)"/>
         public void OnRoundEnded(RoundEndedEventArgs ev)
         {

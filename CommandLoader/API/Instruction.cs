@@ -12,6 +12,7 @@ namespace CommandLoader.API
     using System.Collections.Generic;
     using System.Linq;
     using Exiled.API.Features;
+    using NorthwoodLib.Pools;
     using RemoteAdmin;
 
     /// <summary>
@@ -40,13 +41,12 @@ namespace CommandLoader.API
         /// <param name="sender">The sender of the original command.</param>
         public void Run(CommandSender sender)
         {
-            List<string> parsedArguments = new List<string>();
+            List<string> parsedArguments = ListPool<string>.Shared.Rent();
             foreach (string argument in Arguments)
-            {
                 parsedArguments.Add(ParseWildcard(argument, sender));
-            }
 
             CommandProcessor.ProcessQuery($"{Command} {string.Join(" ", parsedArguments)}", sender);
+            ListPool<string>.Shared.Return(parsedArguments);
         }
 
         /// <inheritdoc />
